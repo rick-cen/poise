@@ -41,9 +41,11 @@ echo "[5] 1756-L61/B LOGIX5561"
 sleep 0.1
 echo "[6] Conpot TLS-350"
 sleep 0.1
-echo "[7] Modicon Modbus PLC"
+echo "[7] Simatic KTP 1200 HMI Sm@rt Server"
 sleep 0.1
-echo "[8] Conpot IEC-104 Substation"
+echo "[8] Modicon Modbus PLC"
+sleep 0.1
+echo "[9] Conpot IEC-104 Substation"
 sleep 0.1
 
 s7300() {
@@ -140,6 +142,17 @@ mqtt() {
 
 }
 
+hmi() {  
+  echo "[!] Reboot your VM when you're done with this emulation"
+  sleep 1
+  echo "[+] Emulating Simatic KTP 1200 HMI Sm@rt Server on "$ip
+  Xvfb :1 -screen 0 1024x754x24 &
+  echo ""
+  sleep 2
+  DISPLAY=:1 feh --fullscreen --no-hint ~/poise/HMI/screen.png &
+  x11vnc -display :1 -rfbport 5900 -forever -shared
+}
+
 
 
 
@@ -153,8 +166,9 @@ case $option in
   4) mqtt ;;
   5) ab1756 ;;
   6) congas ;;
-  7) modicon ;;
-  8) coniec ;;
+  7) hmi ;;
+  8) modicon ;;
+  9) coniec ;;
 
   *) echo "[!] Invalid option. Quitting..." ;;
 esac
