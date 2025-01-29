@@ -15,14 +15,9 @@ echo "-------------------------------------------------------------"
 echo "Practical Offensive Industrial Cybersecurity Essentials - LAB"
 echo "-------------------------------------------------------------"
 
-                       
-#keep emulation awake
-xset -dpms
-xset s off
-sudo systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
-gsettings set org.gnome.desktop.screensaver lock-enabled false
 # stop mqtt broker to avoid interference with other exercises
-sudo /etc/init.d/mosquitto stop > /dev/null 2>&1 &
+#sudo /etc/init.d/mosquitto stop > /dev/null 2>&1
+sudo /etc/init.d/mosquitto stop > /dev/null 2>&1
 
 sleep 0.25
 echo ""
@@ -35,17 +30,19 @@ echo "[2] Simatic S7-300"
 sleep 0.1
 echo "[3] Simatic S7-1500"
 sleep 0.1
-echo "[4] Simatic IOT2050 Smart Factory MQTT Broker"
+echo "[4] Simatic IOT2000 Smart Factory MQTT Broker"
 sleep 0.1
 echo "[5] 1756-L61/B LOGIX5561"
 sleep 0.1
 echo "[6] Conpot TLS-350"
 sleep 0.1
-echo "[7] Simatic KTP 1200 HMI Sm@rt Server"
+echo "[7] Simatic KTP 700 HMI Sm@rt Server"
 sleep 0.1
-echo "[8] Modicon Modbus PLC"
+echo "[8] Simatic KTP 700 HMI Sm@rt Server (Password Protected)"
 sleep 0.1
-echo "[9] Conpot IEC-104 Substation"
+echo "[9] Modicon Modbus PLC"
+sleep 0.1
+echo "[a] Conpot IEC-104 Substation"
 sleep 0.1
 
 s7300() {
@@ -145,12 +142,25 @@ mqtt() {
 hmi() {  
   echo "[!] Reboot your VM when you're done with this emulation"
   sleep 1
-  echo "[+] Emulating Simatic KTP 1200 HMI Sm@rt Server on "$ip
+  echo "[+] Emulating Simatic KTP 700 HMI Sm@rt Server on "$ip
   Xvfb :1 -screen 0 1024x754x24 &
+  sudo nc -l -k -p 102 &
   echo ""
   sleep 2
   DISPLAY=:1 feh --fullscreen --no-hint ~/poise/HMI/screen.png &
-  x11vnc -display :1 -rfbport 5900 -forever -shared
+  x11vnc -display :1 -desktop "SVEHMI" -rfbport 5900 -forever -shared
+}
+
+hmipw() {  
+  echo "[!] Reboot your VM when you're done with this emulation"
+  sleep 1
+  echo "[+] Emulating Simatic KTP 700 HMI Sm@rt Server with passwort protection on "$ip
+  Xvfb :1 -screen 0 1024x754x24 &
+  sudo nc -l -k -p 102 &
+  echo ""
+  sleep 2
+  DISPLAY=:1 feh --fullscreen --no-hint ~/poise/HMI/screen.png &
+  x11vnc -display :1 -rfbauth ~/.vnc/passwd -desktop "SVEHMI" -rfbport 5900 -forever -shared
 }
 
 
@@ -167,8 +177,9 @@ case $option in
   5) ab1756 ;;
   6) congas ;;
   7) hmi ;;
-  8) modicon ;;
-  9) coniec ;;
+  8) hmipw ;;
+  9) modicon ;;
+  a) coniec ;;
 
   *) echo "[!] Invalid option. Quitting..." ;;
 esac
