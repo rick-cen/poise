@@ -54,7 +54,7 @@ s7300() {
   echo "[+] Emulating S7-300 PLC on "$ip
   echo ""
   cd ~
-  cd aptics/s7300/
+  cd ~/poise/s7300/
   nohup sudo python3 -m http.server 80 > /dev/null 2>&1 &
   cd ~
   sudo ./snap7/examples/cpp/x86_64-linux/server $ip
@@ -69,7 +69,7 @@ s71500() {  echo "[!] Reboot your VM when you're done with this emulation"
   echo "[+] Emulating S7-1500 PLC on "$ip
   echo ""
   cd ~
-  cd aptics/s71500/
+  cd ~/poise/s71500/
   nohup sudo python3 -m http.server 80 > /dev/null 2>&1 &
   cd ~
   sudo ./snap7/examples/cpp/x86_64-linux/server $ip
@@ -113,6 +113,9 @@ coniec() {
   sleep 1
   echo "[+] Emulating IEC-104 Substation on "$ip
   echo ""
+  cd ~/poise/iec104/
+  nohup sudo python3 -m http.server 80 > /dev/null 2>&1 &
+  cd ~
   conpot -f --template IEC104
 
 }
