@@ -166,7 +166,38 @@ hmipw() {
   x11vnc -display :1 -rfbauth ~/.vnc/passwd -desktop "SVEHMI" -rfbport 5900 -forever -shared
 }
 
+otnet() {
+  echo "[!]Reboot your VM when you're done with this emulation"
+  sleep 1
+  sudo pkill farpd
+  sudo pkill honeyd
+  echo "[*] Creating hosts and spawning OT network"
+  echo ""
+  sudo honeyd -f ot.conf 10.2.0.50-10.2.0.71
+  #sudo nohup honeyd -f ot.conf 10.2.0.50-10.2.0.71 > /dev/null 2>&1 &
+  sleep 5
+  echo ""
+  echo "[*] Starting Forwarding and Routing Protocol Daemon for OT network"
+  echo ""
+  sudo farpd 10.2.0.50-10.2.0.71
+  #sudo nohup farpd 10.2.0.50-10.2.0.71 > /dev/null 2>&1 &
+  sleep 2
+  echo ""
+  echo "[+] OT network emulation ready"
+  echo -n "[!] Press Enter to end this emulation and reboot the VM."
+  read key
+  case $key in
+    *) reboot ;;
+  esac
+}
 
+reboot() {
+  echo "[*] Rebooting the VM..."
+  sudo pkill farpd
+  sudo pkill honeyd
+  sleep 1
+  sudo reboot
+}
 
 
 echo ""
@@ -183,6 +214,7 @@ case $option in
   8) hmipw ;;
   9) modicon ;;
   a) coniec ;;
+  o) otnet ;;
 
   *) echo "[!] Invalid option. Quitting..." ;;
 esac
